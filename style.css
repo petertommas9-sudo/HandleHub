@@ -2066,3 +2066,40 @@ filter:invert(1);
     background: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
 }
+.more-accounts-box{
+    margin:40px auto;
+    max-width:700px;
+    background:#111827;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:30px;
+    text-align:center;
+}
+
+.more-accounts-box h3{
+    color:#fff;
+    margin-bottom:10px;
+    font-size:28px;
+}
+
+.more-accounts-box p{
+    color:#b7c0d1;
+    line-height:1.7;
+    margin-bottom:25px;
+}
+
+.whatsapp-more-btn{
+    display:inline-block;
+    background:#25D366;
+    color:#fff;
+    padding:14px 30px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.3s;
+}
+
+.whatsapp-more-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 20px rgba(37,211,102,.35);
+}

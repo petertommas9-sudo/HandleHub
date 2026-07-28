@@ -291,7 +291,7 @@ if (paypalBtn) {
         const orderId =
             document.getElementById("orderId").textContent;
 
-        const phone = "2348111910561"; // Replace with your client's number
+        const phone = "+2347089524555"; // Replace with your client's number
 
         const message =
 `Hello HandleHub 👋
