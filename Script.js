@@ -291,17 +291,17 @@ if (paypalBtn) {
         const orderId =
             document.getElementById("orderId").textContent;
 
-        const phone = "+2347089524555"; // Replace with your client's number
+        const phone = "+12512833165"; // Replace with your client's number
 
         const message =
-`Hello HandleHub 👋
+`Hello BuyAHandle 👋
 
 I want to pay using PayPal.
 
-📦 Product: ${product}
-👥 Followers: ${followers}
-💲 Price: ${price}
-🆔 Order ID: ${orderId}
+ Product: ${product}
+ Followers: ${followers}
+ Price: ${price}
+ Order ID: ${orderId}
 
 Please send me your PayPal payment details.`;
 
