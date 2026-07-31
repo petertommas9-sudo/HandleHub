@@ -207,14 +207,14 @@ if (timer) {
 
 }
 /* ===============================
-   9. Payment Confirmation
+   9. Payment Confirmation (Updated)
 =============================== */
 
 const paymentSentBtn = document.getElementById("paymentSentBtn");
 
 if (paymentSentBtn) {
 
-    paymentSentBtn.addEventListener("click", function () {
+    paymentSentBtn.addEventListener("click", async function () {
 
         const email = document.getElementById("customerEmail");
         const txid = document.getElementById("txid");
@@ -232,35 +232,74 @@ if (paymentSentBtn) {
             valid = false;
         }
 
-        if (txid.value.trim() === "") {
+        // Basic front-end check: TXIDs are at least 30+ characters and not just wallet addresses
+        if (txid.value.trim() === "" || txid.value.trim().length < 30) {
+            txidError.textContent = "Please enter a valid Transaction Hash (TXID), not a wallet address.";
             txidError.style.display = "block";
             valid = false;
         }
 
         if (!valid) return;
 
-        document.getElementById("receiptOrderId").textContent =
-            document.getElementById("orderId").textContent;
-
-        document.getElementById("receiptEmail").textContent =
-            email.value;
-
-        document.getElementById("receiptProduct").textContent =
-            document.getElementById("productName").textContent;
-
-        document.getElementById("receiptAmount").textContent =
-            document.getElementById("productPrice").textContent;
-
-        document.getElementById("paymentSuccess").style.display = "block";
-
-        document.getElementById("paymentReceipt").style.display = "block";
-
+        // Change button state to loading
         paymentSentBtn.disabled = true;
-        paymentSentBtn.innerHTML = "✅ Payment Submitted";
+        paymentSentBtn.innerHTML = "⏳ Verifying Payment...";
+
+        try {
+            // Send TXID to your backend for verification
+            const response = await fetch("https://handlehub-backend.onrender.com/api/verify-payment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email.value.trim(),
+                    txid: txid.value.trim(),
+                    orderId: document.getElementById("orderId").textContent,
+                    amount: document.getElementById("productPrice").textContent
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // SUCCESS: Fill receipt details and show success
+                document.getElementById("receiptOrderId").textContent =
+                    document.getElementById("orderId").textContent;
+
+                document.getElementById("receiptEmail").textContent =
+                    email.value;
+
+                document.getElementById("receiptProduct").textContent =
+                    document.getElementById("productName").textContent;
+
+                document.getElementById("receiptAmount").textContent =
+                    document.getElementById("productPrice").textContent;
+
+                document.getElementById("paymentSuccess").style.display = "block";
+                document.getElementById("paymentReceipt").style.display = "block";
+
+                paymentSentBtn.innerHTML = "✅ Payment Verified";
+            } else {
+                // FAILURE: Show error returned by backend
+                txidError.textContent = data.message || "Invalid or unconfirmed Transaction ID.";
+                txidError.style.display = "block";
+                paymentSentBtn.disabled = false;
+                paymentSentBtn.innerHTML = "Confirm Payment";
+            }
+
+        } catch (error) {
+            console.error("Verification error:", error);
+            txidError.textContent = "Server verification failed. Please try again.";
+            txidError.style.display = "block";
+            paymentSentBtn.disabled = false;
+            paymentSentBtn.innerHTML = "Confirm Payment";
+        }
 
     });
 
 }
+
 /* ===============================
    10. PayPal → WhatsApp
 =============================== */
