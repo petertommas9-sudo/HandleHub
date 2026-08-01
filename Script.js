@@ -456,3 +456,73 @@ const observer = new IntersectionObserver((entries, observer) => {
 counters.forEach(counter => {
     observer.observe(counter);
 });
+/* ===============================
+   12. Dynamic Cards Fetch & Render
+=============================== */
+
+async function loadAccountsFromBackend() {
+    // Look for the grid container where account cards live
+    const container = document.getElementById("accountsGrid") || document.querySelector(".accounts-grid");
+    if (!container) return;
+
+    try {
+        const response = await fetch("https://handlehub-backend.onrender.com/api/products");
+        const data = await response.json();
+
+        if (data.success && data.products.length > 0) {
+            container.innerHTML = data.products.map(card => {
+                // Split comma-separated image URLs into an array
+                const images = (card.image_url || '').split(',').map(url => url.trim()).filter(Boolean);
+                const firstImage = images[0] || 'https://via.placeholder.com/300x180';
+
+                return `
+                    <div class="account-card-item">
+                        <div class="card-header">
+                            <img src="${firstImage}" class="account-preview-img" alt="${card.title}">
+                            ${card.badge ? `<span class="badge">${card.badge}</span>` : ''}
+                        </div>
+                        <div class="card-body">
+                            <h3>${card.title}</h3>
+                            <p class="subtext">${card.subtext}</p>
+                            <div class="price-tag">${card.price}</div>
+                            <button class="buy-btn" 
+                                data-product="${card.title}" 
+                                data-followers="${card.subtext}" 
+                                data-price="${card.price}"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#paymentModal">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Re-bind the Buy Now button click listeners for the newly added dynamic buttons
+            bindBuyNowButtons();
+        }
+    } catch (err) {
+        console.error("Failed to load backend products:", err);
+    }
+}
+
+// Helper to attach event handlers to dynamic Buy Now buttons
+function bindBuyNowButtons() {
+    const dynamicButtons = document.querySelectorAll(".buy-btn");
+    dynamicButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const product = this.dataset.product;
+            const followers = this.dataset.followers;
+            const price = this.dataset.price;
+            const orderId = "HH-" + Math.floor(100000 + Math.random() * 900000);
+
+            if(document.getElementById("productName")) document.getElementById("productName").textContent = product;
+            if(document.getElementById("productFollowers")) document.getElementById("productFollowers").textContent = followers;
+            if(document.getElementById("productPrice")) document.getElementById("productPrice").textContent = price;
+            if(document.getElementById("orderId")) document.getElementById("orderId").textContent = orderId;
+        });
+    });
+}
+
+// Call function on page load
+document.addEventListener("DOMContentLoaded", loadAccountsFromBackend);
