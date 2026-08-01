@@ -1,6 +1,5 @@
 /* ==========================================
    HandleHub - Main JavaScript
-   Part 1
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,217 +7,107 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ===============================
        1. Loader (2 Seconds)
     =============================== */
-
     const loader = document.getElementById("loader");
-
     if (loader) {
         setTimeout(() => {
             loader.style.opacity = "0";
-
-            setTimeout(() => {
-                loader.style.display = "none";
-            }, 500);
-
+            setTimeout(() => { loader.style.display = "none"; }, 500);
         }, 2000);
     }
-
 
     /* ===============================
        2. Scroll Progress Bar
     =============================== */
-
     const progressBar = document.getElementById("progress-bar");
-
     window.addEventListener("scroll", () => {
-
-        const scrollTop =
-            document.documentElement.scrollTop;
-
-        const scrollHeight =
-            document.documentElement.scrollHeight -
-            document.documentElement.clientHeight;
-
-        const progress =
-            (scrollTop / scrollHeight) * 100;
-
-        if (progressBar) {
-            progressBar.style.width = progress + "%";
-        }
-
+        const scrollTop = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = (scrollTop / scrollHeight) * 100;
+        if (progressBar) progressBar.style.width = progress + "%";
     });
-
 
     /* ===============================
        3. Sticky Navbar
     =============================== */
-
     const navbar = document.querySelector(".navbar");
-
     window.addEventListener("scroll", () => {
-
         if (!navbar) return;
-
         if (window.scrollY > 80) {
-
             navbar.style.padding = "12px 0";
-            navbar.style.background =
-                "rgba(8,12,24,.92)";
-
+            navbar.style.background = "rgba(8,12,24,.92)";
         } else {
-
             navbar.style.padding = "20px 0";
-            navbar.style.background =
-                "rgba(8,12,24,.65)";
+            navbar.style.background = "rgba(8,12,24,.65)";
         }
-
     });
-
 
     /* ===============================
        4. Cursor Glow
     =============================== */
-
-    const cursorGlow =
-        document.querySelector(".cursor-glow");
-
+    const cursorGlow = document.querySelector(".cursor-glow");
     if (cursorGlow) {
-
         document.addEventListener("mousemove", (e) => {
-
             cursorGlow.style.left = e.clientX + "px";
             cursorGlow.style.top = e.clientY + "px";
-
         });
-
     }
 
+    // Load backend accounts dynamically
+    loadAccountsFromBackend();
 });
 
 /* ===============================
-   5. Buy Now Buttons
+   5. Crypto Payment
 =============================== */
-
-const buyButtons = document.querySelectorAll(".buy-btn");
-
-buyButtons.forEach(button => {
-
-    button.addEventListener("click", function () {
-
-        const product = this.dataset.product;
-        const followers = this.dataset.followers;
-        const price = this.dataset.price;
-
-        const orderId =
-            "HH-" + Math.floor(100000 + Math.random() * 900000);
-
-        document.getElementById("productName").textContent = product;
-        document.getElementById("productFollowers").textContent = followers;
-        document.getElementById("productPrice").textContent = price;
-        document.getElementById("orderId").textContent = orderId;
-
-    });
-
-});
-
-/* ===============================
-   6. Crypto Payment
-=============================== */
-
 const cryptoBtn = document.querySelector(".crypto-btn");
-
 if (cryptoBtn) {
-
     cryptoBtn.addEventListener("click", function () {
-
-        // Close Payment Method Modal
         const paymentModalElement = document.getElementById("paymentModal");
         const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
+        if (paymentModal) paymentModal.hide();
 
-        if (paymentModal) {
-            paymentModal.hide();
-        }
-
-        // Open Crypto Modal
-        const cryptoModal = new bootstrap.Modal(
-            document.getElementById("cryptoModal")
-        );
-
+        const cryptoModal = new bootstrap.Modal(document.getElementById("cryptoModal"));
         cryptoModal.show();
-
     });
-
 }
 
-
 /* ===============================
-   7. Copy Wallet Address
+   6. Copy Wallet Address
 =============================== */
-
 const copyWallet = document.getElementById("copyWallet");
-
 if (copyWallet) {
-
     copyWallet.addEventListener("click", function () {
-
-        const wallet =
-            document.getElementById("walletAddress");
-
+        const wallet = document.getElementById("walletAddress");
         wallet.select();
         wallet.setSelectionRange(0, 99999);
-
         navigator.clipboard.writeText(wallet.value);
-
         this.innerHTML = "✅ Copied";
-
-        setTimeout(() => {
-
-            this.innerHTML = "Copy";
-
-        }, 2000);
-
+        setTimeout(() => { this.innerHTML = "Copy"; }, 2000);
     });
-
 }
 
-
 /* ===============================
-   8. 30-Minute Countdown
+   7. 30-Minute Countdown
 =============================== */
-
 const timer = document.getElementById("countdownTimer");
-
 if (timer) {
-
     let time = 1800;
-
     setInterval(() => {
-
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
-
-        timer.textContent =
-            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-        if (time > 0) {
-            time--;
-        }
-
+        timer.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        if (time > 0) time--;
     }, 1000);
-
 }
+
 /* ===============================
-   9. Payment Confirmation (Updated)
+   8. Payment Verification
 =============================== */
-
 const paymentSentBtn = document.getElementById("paymentSentBtn");
-
 if (paymentSentBtn) {
-
     paymentSentBtn.addEventListener("click", async function () {
-
         const email = document.getElementById("customerEmail");
         const txid = document.getElementById("txid");
-
         const emailError = document.getElementById("emailError");
         const txidError = document.getElementById("txidError");
 
@@ -226,13 +115,10 @@ if (paymentSentBtn) {
         txidError.style.display = "none";
 
         let valid = true;
-
         if (email.value.trim() === "") {
             emailError.style.display = "block";
             valid = false;
         }
-
-        // Basic front-end check: TXIDs are at least 30+ characters and not just wallet addresses
         if (txid.value.trim() === "" || txid.value.trim().length < 30) {
             txidError.textContent = "Please enter a valid Transaction Hash (TXID), not a wallet address.";
             txidError.style.display = "block";
@@ -241,17 +127,13 @@ if (paymentSentBtn) {
 
         if (!valid) return;
 
-        // Change button state to loading
         paymentSentBtn.disabled = true;
         paymentSentBtn.innerHTML = "⏳ Verifying Payment...";
 
         try {
-            // Send TXID to your backend for verification
             const response = await fetch("https://handlehub-backend.onrender.com/api/verify-payment", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email: email.value.trim(),
                     txid: txid.value.trim(),
@@ -263,42 +145,144 @@ if (paymentSentBtn) {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                // SUCCESS: Fill receipt details and show success
-                document.getElementById("receiptOrderId").textContent =
-                    document.getElementById("orderId").textContent;
-
-                document.getElementById("receiptEmail").textContent =
-                    email.value;
-
-                document.getElementById("receiptProduct").textContent =
-                    document.getElementById("productName").textContent;
-
-                document.getElementById("receiptAmount").textContent =
-                    document.getElementById("productPrice").textContent;
+                document.getElementById("receiptOrderId").textContent = document.getElementById("orderId").textContent;
+                document.getElementById("receiptEmail").textContent = email.value;
+                document.getElementById("receiptProduct").textContent = document.getElementById("productName").textContent;
+                document.getElementById("receiptAmount").textContent = document.getElementById("productPrice").textContent;
 
                 document.getElementById("paymentSuccess").style.display = "block";
                 document.getElementById("paymentReceipt").style.display = "block";
-
                 paymentSentBtn.innerHTML = "✅ Payment Verified";
             } else {
-                // FAILURE: Show error returned by backend
                 txidError.textContent = data.message || "Invalid or unconfirmed Transaction ID.";
                 txidError.style.display = "block";
                 paymentSentBtn.disabled = false;
                 paymentSentBtn.innerHTML = "Confirm Payment";
             }
-
         } catch (error) {
-            console.error("Verification error:", error);
             txidError.textContent = "Server verification failed. Please try again.";
             txidError.style.display = "block";
             paymentSentBtn.disabled = false;
             paymentSentBtn.innerHTML = "Confirm Payment";
         }
-
     });
-
 }
+
+/* ===============================
+   9. Dynamic Backend Fetch & Render
+=============================== */
+async function loadAccountsFromBackend() {
+    const container = document.getElementById("accountsGrid");
+    if (!container) return;
+
+    try {
+        const response = await fetch("https://handlehub-backend.onrender.com/api/products");
+        const data = await response.json();
+
+        if (data.success && data.products.length > 0) {
+            container.innerHTML = data.products.map((card, index) => {
+                const images = (card.image_url || '').split(',').map(url => url.trim()).filter(Boolean);
+                const carouselId = `carouselAccount_${index}`;
+
+                // Build Carousel Slides
+                const slidesHtml = images.length > 0 
+                    ? images.map((img, i) => `
+                        <div class="carousel-item ${i === 0 ? 'active' : ''} h-100">
+                            <img src="${img}" alt="Preview ${i + 1}">
+                        </div>
+                      `).join('')
+                    : `<div class="carousel-item active h-100"><img src="https://via.placeholder.com/300x180" alt="Placeholder"></div>`;
+
+                // Build Indicators
+                const indicatorsHtml = images.length > 1 
+                    ? images.map((_, i) => `
+                        <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></button>
+                      `).join('') 
+                    : '';
+
+                return `
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <div class="st-card">
+                        <div class="st-card-img-wrapper">
+                            <div class="st-badges">
+                                ${card.badge ? `<span class="st-badge sale">${card.badge}</span>` : ''}
+                                <span class="st-badge lightning" title="Fast Delivery">⚡</span>
+                            </div>
+                            <div class="st-platform-icon youtube">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+
+                            <div id="${carouselId}" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000">
+                                ${indicatorsHtml ? `<div class="carousel-indicators">${indicatorsHtml}</div>` : ''}
+                                <div class="carousel-inner h-100">
+                                    ${slidesHtml}
+                                </div>
+                                ${images.length > 1 ? `
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="st-card-body">
+                            <h4 class="st-title">${card.title}</h4>
+                            <p class="st-followers">${card.subtext}</p>
+                            <div class="st-pricing">
+                                <span class="st-price-new">${card.price}</span>
+                            </div>
+                            <div class="st-card-actions">
+                                <button class="btn st-btn-buy buy-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#paymentModal"
+                                        data-product="${card.title}" 
+                                        data-followers="${card.subtext}" 
+                                        data-price="${card.price}">
+                                    Buy Now
+                                </button>
+                                <button class="btn st-btn-offer" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                                    Offer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            bindBuyNowButtons();
+            
+            // Re-initialize Bootstrap carousels for the dynamically loaded cards
+            document.querySelectorAll('.carousel').forEach(carouselEl => {
+                const carousel = new bootstrap.Carousel(carouselEl, { interval: 3000, ride: 'carousel' });
+                carousel.cycle();
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load accounts:", err);
+    }
+}
+
+function bindBuyNowButtons() {
+    const buyButtons = document.querySelectorAll(".buy-btn");
+    buyButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const product = this.dataset.product;
+            const followers = this.dataset.followers;
+            const price = this.dataset.price;
+            const orderId = "HH-" + Math.floor(100000 + Math.random() * 900000);
+
+            if (document.getElementById("productName")) document.getElementById("productName").textContent = product;
+            if (document.getElementById("productFollowers")) document.getElementById("productFollowers").textContent = followers;
+            if (document.getElementById("productPrice")) document.getElementById("productPrice").textContent = price;
+            if (document.getElementById("orderId")) document.getElementById("orderId").textContent = orderId;
+        });
+    });
+}
+
 
 /* ===============================
    10. PayPal → WhatsApp
@@ -526,3 +510,102 @@ function bindBuyNowButtons() {
 
 // Call function on page load
 document.addEventListener("DOMContentLoaded", loadAccountsFromBackend);
+/* ===============================
+   Dynamic Backend Fetch & Render (Styled)
+=============================== */
+async function loadAccountsFromBackend() {
+    const container = document.getElementById("accountsGrid");
+    if (!container) return;
+
+    try {
+        const response = await fetch("https://handlehub-backend.onrender.com/api/products");
+        const data = await response.json();
+
+        if (data.success && data.products.length > 0) {
+            container.innerHTML = data.products.map((card, index) => {
+                const images = (card.image_url || '').split(',').map(url => url.trim()).filter(Boolean);
+                const carouselId = `carouselAccount_${index}`;
+
+                // Build Carousel Slides
+                const slidesHtml = images.length > 0 
+                    ? images.map((img, i) => `
+                        <div class="carousel-item ${i === 0 ? 'active' : ''} h-100">
+                            <img src="${img}" alt="${card.title} Preview ${i + 1}">
+                        </div>
+                      `).join('')
+                    : `<div class="carousel-item active h-100"><img src="https://via.placeholder.com/400x250" alt="Placeholder"></div>`;
+
+                // Build Carousel Indicators
+                const indicatorsHtml = images.length > 1 
+                    ? images.map((_, i) => `
+                        <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></button>
+                      `).join('') 
+                    : '';
+
+                return `
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <div class="st-card">
+                        <div class="st-card-img-wrapper">
+                            <div class="st-badges">
+                                ${card.badge ? `<span class="st-badge sale">${card.badge}</span>` : '<span class="st-badge sale">MONETIZED</span>'}
+                                <span class="st-badge lightning" title="Fast Delivery">⚡</span>
+                            </div>
+                            <div class="st-platform-icon youtube">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+
+                            <div id="${carouselId}" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000">
+                                ${indicatorsHtml ? `<div class="carousel-indicators">${indicatorsHtml}</div>` : ''}
+                                <div class="carousel-inner h-100">
+                                    ${slidesHtml}
+                                </div>
+                                ${images.length > 1 ? `
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="st-card-body">
+                            <h4 class="st-title">${card.title}</h4>
+                            <p class="st-followers">${card.subtext || ''}</p>
+                            <div class="st-pricing">
+                                <span class="st-price-new">${card.price}</span>
+                                ${card.monthly_profit ? `<span class="st-price-old">${card.monthly_profit}</span>` : ''}
+                            </div>
+                            <div class="st-card-actions">
+                                <button class="btn st-btn-buy buy-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#paymentModal"
+                                        data-product="${card.title}" 
+                                        data-followers="${card.subtext || ''}" 
+                                        data-price="${card.price}">
+                                    Buy Now
+                                </button>
+                                <button class="btn st-btn-offer" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                                    Offer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            bindBuyNowButtons();
+            
+            // Re-initialize Bootstrap carousels for the dynamically loaded cards
+            document.querySelectorAll('.carousel').forEach(carouselEl => {
+                const carousel = new bootstrap.Carousel(carouselEl, { interval: 3000, ride: 'carousel' });
+                carousel.cycle();
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load accounts:", err);
+    }
+}
+

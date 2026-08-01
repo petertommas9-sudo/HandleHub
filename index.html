@@ -223,7 +223,9 @@ Featured Accounts
             <p>Browse our verified monetized social media accounts.</p>
         </div>
 
-        <div class="row g-4 justify-content-center">
+        <div class="row g-4 justify-content-center" id="accountsGrid">
+    <!-- Static cards are removed so backend listings load dynamically -->
+
 
             <!-- Card 1: Soulgrit -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up">
@@ -976,7 +978,7 @@ Crypto Payment Modal
 
 <div class="alert alert-danger text-center mt-3">
 
-    ⏰ Payment Expires In
+    Payment Expires In
 
     <h4 id="countdownTimer" class="mt-2 mb-0">
         30:00
@@ -986,26 +988,10 @@ Crypto Payment Modal
 
 <div class="order-summary">
 
-    <h5>Order Summary</h5>
-
-    <p>
-        <strong>Product:</strong>
-        <span id="productName">-</span>
-    </p>
-
-    <p>
-        <strong>Followers:</strong>
-        <span id="productFollowers">-</span>
-    </p>
-
-    <p>
-        <strong>Price:</strong>
-        <span id="productPrice">$0</span>
-    </p>
     
     <div class="alert alert-info mt-3">
 
-    <h6>📋 Payment Instructions</h6>
+    <h6> Payment Instructions</h6>
 
     <ul class="mb-0">
 
@@ -1018,6 +1004,8 @@ Crypto Payment Modal
         <li>After payment, enter your TXID.</li>
 
         <li>Click "I've Sent Payment".</li>
+        
+        <li>The Logins Will Be Deliver To You In The Email You Providered </li>
 
     </ul>
 
@@ -1064,26 +1052,8 @@ Crypto Payment Modal
                     </button>
 
                 </div>
-                <div class="payment-progress">
+                <div class="payment-progres
 
-    <div class="progress-step active">
-        <div class="step-circle">1</div>
-        <span>Payment</span>
-    </div>
-
-    <div class="progress-line"></div>
-
-    <div class="progress-step">
-        <div class="step-circle">2</div>
-        <span>Verification</span>
-    </div>
-
-    <div class="progress-line"></div>
-
-    <div class="progress-step">
-        <div class="step-circle">3</div>
-        <span>Delivery</span>
-    </div>
 
 </div>
 
@@ -1141,26 +1111,6 @@ Crypto Payment Modal
 
 </div>
 
-<div class="alert alert-warning mt-3">
-
-    <h6>⚠ Important Notice</h6>
-
-    <p class="mb-2">
-        After completing your payment, please click the
-        <strong>Chat on WhatsApp</strong> button below and send us:
-    </p>
-
-    <ul class="mb-2">
-        <li>Your Order ID</li>
-        <li>Your Transaction Hash (TXID)</li>
-        <li>Your payment screenshot (optional)</li>
-    </ul>
-
-    <p class="mb-0">
-        Your account login details will be delivered manually after your payment has been verified.
-    </p>
-
-</div>
 
 <button id="paymentSentBtn" class="btn btn-success w-100">
     I've Sent Payment
@@ -1180,7 +1130,7 @@ Chat on WhatsApp
 
 <div id="paymentSuccess" class="alert alert-success text-center mt-3" style="display:none;">
 
-    <h4>✅ Payment Submitted!</h4>
+    <h4> Payment Submitted!</h4>
 
     <div id="paymentReceipt" class="card mt-3" style="display:none;">
 
