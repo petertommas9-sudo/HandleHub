@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Load backend accounts dynamically
+    // Load backend accounts dynamically on start
     loadAccountsFromBackend();
 });
 
@@ -78,6 +78,7 @@ const copyWallet = document.getElementById("copyWallet");
 if (copyWallet) {
     copyWallet.addEventListener("click", function () {
         const wallet = document.getElementById("walletAddress");
+        if (!wallet) return;
         wallet.select();
         wallet.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(wallet.value);
@@ -111,17 +112,19 @@ if (paymentSentBtn) {
         const emailError = document.getElementById("emailError");
         const txidError = document.getElementById("txidError");
 
-        emailError.style.display = "none";
-        txidError.style.display = "none";
+        if (emailError) emailError.style.display = "none";
+        if (txidError) txidError.style.display = "none";
 
         let valid = true;
-        if (email.value.trim() === "") {
-            emailError.style.display = "block";
+        if (!email || email.value.trim() === "") {
+            if (emailError) emailError.style.display = "block";
             valid = false;
         }
-        if (txid.value.trim() === "" || txid.value.trim().length < 30) {
-            txidError.textContent = "Please enter a valid Transaction Hash (TXID), not a wallet address.";
-            txidError.style.display = "block";
+        if (!txid || txid.value.trim() === "" || txid.value.trim().length < 30) {
+            if (txidError) {
+                txidError.textContent = "Please enter a valid Transaction Hash (TXID), not a wallet address.";
+                txidError.style.display = "block";
+            }
             valid = false;
         }
 
@@ -130,6 +133,10 @@ if (paymentSentBtn) {
         paymentSentBtn.disabled = true;
         paymentSentBtn.innerHTML = "⏳ Verifying Payment...";
 
+        const orderIdEl = document.getElementById("orderId");
+        const priceEl = document.getElementById("productPrice");
+        const productNameEl = document.getElementById("productName");
+
         try {
             const response = await fetch("https://handlehub-backend.onrender.com/api/verify-payment", {
                 method: "POST",
@@ -137,31 +144,36 @@ if (paymentSentBtn) {
                 body: JSON.stringify({
                     email: email.value.trim(),
                     txid: txid.value.trim(),
-                    orderId: document.getElementById("orderId").textContent,
-                    amount: document.getElementById("productPrice").textContent
+                    orderId: orderIdEl ? orderIdEl.textContent : "HH-000000",
+                    amount: priceEl ? priceEl.textContent : "$0"
                 })
             });
 
             const data = await response.json();
 
             if (response.ok && data.success) {
-                document.getElementById("receiptOrderId").textContent = document.getElementById("orderId").textContent;
-                document.getElementById("receiptEmail").textContent = email.value;
-                document.getElementById("receiptProduct").textContent = document.getElementById("productName").textContent;
-                document.getElementById("receiptAmount").textContent = document.getElementById("productPrice").textContent;
+                if (document.getElementById("receiptOrderId")) document.getElementById("receiptOrderId").textContent = orderIdEl ? orderIdEl.textContent : "";
+                if (document.getElementById("receiptEmail")) document.getElementById("receiptEmail").textContent = email.value;
+                if (document.getElementById("receiptProduct")) document.getElementById("receiptProduct").textContent = productNameEl ? productNameEl.textContent : "";
+                if (document.getElementById("receiptAmount")) document.getElementById("receiptAmount").textContent = priceEl ? priceEl.textContent : "";
 
-                document.getElementById("paymentSuccess").style.display = "block";
-                document.getElementById("paymentReceipt").style.display = "block";
+                if (document.getElementById("paymentSuccess")) document.getElementById("paymentSuccess").style.display = "block";
+                if (document.getElementById("paymentReceipt")) document.getElementById("paymentReceipt").style.display = "block";
                 paymentSentBtn.innerHTML = "✅ Payment Verified";
             } else {
-                txidError.textContent = data.message || "Invalid or unconfirmed Transaction ID.";
-                txidError.style.display = "block";
+                if (txidError) {
+                    txidError.textContent = data.message || "Invalid or unconfirmed Transaction ID.";
+                    txidError.style.display = "block";
+                }
                 paymentSentBtn.disabled = false;
                 paymentSentBtn.innerHTML = "Confirm Payment";
             }
         } catch (error) {
-            txidError.textContent = "Server verification failed. Please try again.";
-            txidError.style.display = "block";
+            console.error("Payment Verification Error:", error);
+            if (txidError) {
+                txidError.textContent = "Server verification failed. Please wake up your backend server or check connection.";
+                txidError.style.display = "block";
+            }
             paymentSentBtn.disabled = false;
             paymentSentBtn.innerHTML = "Confirm Payment";
         }
@@ -170,348 +182,6 @@ if (paymentSentBtn) {
 
 /* ===============================
    9. Dynamic Backend Fetch & Render
-=============================== */
-async function loadAccountsFromBackend() {
-    const container = document.getElementById("accountsGrid");
-    if (!container) return;
-
-    try {
-        const response = await fetch("https://handlehub-backend.onrender.com/api/products");
-        const data = await response.json();
-
-        if (data.success && data.products.length > 0) {
-            container.innerHTML = data.products.map((card, index) => {
-                const images = (card.image_url || '').split(',').map(url => url.trim()).filter(Boolean);
-                const carouselId = `carouselAccount_${index}`;
-
-                // Build Carousel Slides
-                const slidesHtml = images.length > 0 
-                    ? images.map((img, i) => `
-                        <div class="carousel-item ${i === 0 ? 'active' : ''} h-100">
-                            <img src="${img}" alt="Preview ${i + 1}">
-                        </div>
-                      `).join('')
-                    : `<div class="carousel-item active h-100"><img src="https://via.placeholder.com/300x180" alt="Placeholder"></div>`;
-
-                // Build Indicators
-                const indicatorsHtml = images.length > 1 
-                    ? images.map((_, i) => `
-                        <button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></button>
-                      `).join('') 
-                    : '';
-
-                return `
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                    <div class="st-card">
-                        <div class="st-card-img-wrapper">
-                            <div class="st-badges">
-                                ${card.badge ? `<span class="st-badge sale">${card.badge}</span>` : ''}
-                                <span class="st-badge lightning" title="Fast Delivery">⚡</span>
-                            </div>
-                            <div class="st-platform-icon youtube">
-                                <i class="fab fa-youtube"></i>
-                            </div>
-
-                            <div id="${carouselId}" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000">
-                                ${indicatorsHtml ? `<div class="carousel-indicators">${indicatorsHtml}</div>` : ''}
-                                <div class="carousel-inner h-100">
-                                    ${slidesHtml}
-                                </div>
-                                ${images.length > 1 ? `
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon"></span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon"></span>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-
-                        <div class="st-card-body">
-                            <h4 class="st-title">${card.title}</h4>
-                            <p class="st-followers">${card.subtext}</p>
-                            <div class="st-pricing">
-                                <span class="st-price-new">${card.price}</span>
-                            </div>
-                            <div class="st-card-actions">
-                                <button class="btn st-btn-buy buy-btn" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#paymentModal"
-                                        data-product="${card.title}" 
-                                        data-followers="${card.subtext}" 
-                                        data-price="${card.price}">
-                                    Buy Now
-                                </button>
-                                <button class="btn st-btn-offer" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                                    Offer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
-
-            bindBuyNowButtons();
-            
-            // Re-initialize Bootstrap carousels for the dynamically loaded cards
-            document.querySelectorAll('.carousel').forEach(carouselEl => {
-                const carousel = new bootstrap.Carousel(carouselEl, { interval: 3000, ride: 'carousel' });
-                carousel.cycle();
-            });
-        }
-    } catch (err) {
-        console.error("Failed to load accounts:", err);
-    }
-}
-
-function bindBuyNowButtons() {
-    const buyButtons = document.querySelectorAll(".buy-btn");
-    buyButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            const product = this.dataset.product;
-            const followers = this.dataset.followers;
-            const price = this.dataset.price;
-            const orderId = "HH-" + Math.floor(100000 + Math.random() * 900000);
-
-            if (document.getElementById("productName")) document.getElementById("productName").textContent = product;
-            if (document.getElementById("productFollowers")) document.getElementById("productFollowers").textContent = followers;
-            if (document.getElementById("productPrice")) document.getElementById("productPrice").textContent = price;
-            if (document.getElementById("orderId")) document.getElementById("orderId").textContent = orderId;
-        });
-    });
-}
-
-
-/* ===============================
-   10. PayPal → WhatsApp
-=============================== */
-
-const paypalBtn = document.getElementById("paypalBtn");
-
-if (paypalBtn) {
-
-    paypalBtn.addEventListener("click", function () {
-
-        // Close Payment Method Modal
-        const paymentModalElement = document.getElementById("paymentModal");
-        const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
-
-        if (paymentModal) {
-            paymentModal.hide();
-        }
-
-        const product =
-            document.getElementById("productName").textContent;
-
-        const followers =
-            document.getElementById("productFollowers").textContent;
-
-        const price =
-            document.getElementById("productPrice").textContent;
-
-        const orderId =
-            document.getElementById("orderId").textContent;
-
-        const phone = "+12512833165"; // Replace with your client's number
-
-        const message =
-`Hello BuyAHandle 👋
-
-I want to pay using PayPal.
-
- Product: ${product}
- Followers: ${followers}
- Price: ${price}
- Order ID: ${orderId}
-
-Please send me your PayPal payment details.`;
-
-        window.open(
-            `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-            "_blank"
-        );
-
-    });
-
-}
-/* ===============================
-   11. Final Initialization
-=============================== */
-
-// Initialize AOS Animation
-if (typeof AOS !== "undefined") {
-    AOS.init({
-        duration: 800,
-        once: true
-    });
-}
-
-// Initialize Particles
-if (typeof particlesJS !== "undefined") {
-
-    particlesJS("particles-js", {
-
-        particles: {
-            number: {
-                value: 60
-            },
-            color: {
-                value: "#3b82f6"
-            },
-            shape: {
-                type: "circle"
-            },
-            opacity: {
-                value: 0.5
-            },
-            size: {
-                value: 3
-            },
-            line_linked: {
-                enable: true,
-                distance: 150,
-                color: "#3b82f6",
-                opacity: 0.3,
-                width: 1
-            },
-            move: {
-                enable: true,
-                speed: 2
-            }
-        },
-
-        interactivity: {
-            events: {
-                onhover: {
-                    enable: true,
-                    mode: "grab"
-                }
-            }
-        }
-
-    });
-
-}
-
-// Statistics Counter
-// ===============================
-// COUNTER ANIMATION ON SCROLL
-// ===============================
-
-const counters = document.querySelectorAll(".counter");
-
-const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-
-        const counter = entry.target;
-        const target = parseInt(counter.getAttribute("data-target"));
-        const speed = 40;
-
-        let count = 0;
-
-        const updateCounter = () => {
-            const increment = Math.ceil(target / speed);
-
-            if (count < target) {
-                count += increment;
-
-                if (count > target) {
-                    count = target;
-                }
-
-                counter.innerText = count;
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.innerText = target;
-            }
-        };
-
-        updateCounter();
-
-        observer.unobserve(counter); // Count only once
-    });
-}, {
-    threshold: 0.5
-});
-
-counters.forEach(counter => {
-    observer.observe(counter);
-});
-/* ===============================
-   12. Dynamic Cards Fetch & Render
-=============================== */
-
-async function loadAccountsFromBackend() {
-    // Look for the grid container where account cards live
-    const container = document.getElementById("accountsGrid") || document.querySelector(".accounts-grid");
-    if (!container) return;
-
-    try {
-        const response = await fetch("https://handlehub-backend.onrender.com/api/products");
-        const data = await response.json();
-
-        if (data.success && data.products.length > 0) {
-            container.innerHTML = data.products.map(card => {
-                // Split comma-separated image URLs into an array
-                const images = (card.image_url || '').split(',').map(url => url.trim()).filter(Boolean);
-                const firstImage = images[0] || 'https://via.placeholder.com/300x180';
-
-                return `
-                    <div class="account-card-item">
-                        <div class="card-header">
-                            <img src="${firstImage}" class="account-preview-img" alt="${card.title}">
-                            ${card.badge ? `<span class="badge">${card.badge}</span>` : ''}
-                        </div>
-                        <div class="card-body">
-                            <h3>${card.title}</h3>
-                            <p class="subtext">${card.subtext}</p>
-                            <div class="price-tag">${card.price}</div>
-                            <button class="buy-btn" 
-                                data-product="${card.title}" 
-                                data-followers="${card.subtext}" 
-                                data-price="${card.price}"
-                                data-bs-toggle="modal" 
-                                data-bs-target="#paymentModal">
-                                Buy Now
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Re-bind the Buy Now button click listeners for the newly added dynamic buttons
-            bindBuyNowButtons();
-        }
-    } catch (err) {
-        console.error("Failed to load backend products:", err);
-    }
-}
-
-// Helper to attach event handlers to dynamic Buy Now buttons
-function bindBuyNowButtons() {
-    const dynamicButtons = document.querySelectorAll(".buy-btn");
-    dynamicButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            const product = this.dataset.product;
-            const followers = this.dataset.followers;
-            const price = this.dataset.price;
-            const orderId = "HH-" + Math.floor(100000 + Math.random() * 900000);
-
-            if(document.getElementById("productName")) document.getElementById("productName").textContent = product;
-            if(document.getElementById("productFollowers")) document.getElementById("productFollowers").textContent = followers;
-            if(document.getElementById("productPrice")) document.getElementById("productPrice").textContent = price;
-            if(document.getElementById("orderId")) document.getElementById("orderId").textContent = orderId;
-        });
-    });
-}
-
-// Call function on page load
-document.addEventListener("DOMContentLoaded", loadAccountsFromBackend);
-/* ===============================
-   Dynamic Backend Fetch & Render (Styled)
 =============================== */
 async function loadAccountsFromBackend() {
     const container = document.getElementById("accountsGrid");
@@ -598,14 +268,123 @@ async function loadAccountsFromBackend() {
 
             bindBuyNowButtons();
             
-            // Re-initialize Bootstrap carousels for the dynamically loaded cards
-            document.querySelectorAll('.carousel').forEach(carouselEl => {
-                const carousel = new bootstrap.Carousel(carouselEl, { interval: 3000, ride: 'carousel' });
-                carousel.cycle();
-            });
+            // Re-initialize Bootstrap carousels for dynamic cards
+            if (typeof bootstrap !== "undefined") {
+                document.querySelectorAll('.carousel').forEach(carouselEl => {
+                    const carousel = new bootstrap.Carousel(carouselEl, { interval: 3000, ride: 'carousel' });
+                    carousel.cycle();
+                });
+            }
         }
     } catch (err) {
         console.error("Failed to load accounts:", err);
     }
 }
 
+function bindBuyNowButtons() {
+    const buyButtons = document.querySelectorAll(".buy-btn");
+    buyButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const product = this.dataset.product;
+            const followers = this.dataset.followers;
+            const price = this.dataset.price;
+            const orderId = "HH-" + Math.floor(100000 + Math.random() * 900000);
+
+            if (document.getElementById("productName")) document.getElementById("productName").textContent = product;
+            if (document.getElementById("productFollowers")) document.getElementById("productFollowers").textContent = followers;
+            if (document.getElementById("productPrice")) document.getElementById("productPrice").textContent = price;
+            if (document.getElementById("orderId")) document.getElementById("orderId").textContent = orderId;
+        });
+    });
+}
+
+/* ===============================
+   10. PayPal → WhatsApp
+=============================== */
+const paypalBtn = document.getElementById("paypalBtn");
+if (paypalBtn) {
+    paypalBtn.addEventListener("click", function () {
+        const paymentModalElement = document.getElementById("paymentModal");
+        if (typeof bootstrap !== "undefined") {
+            const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
+            if (paymentModal) paymentModal.hide();
+        }
+
+        const product = document.getElementById("productName")?.textContent || "N/A";
+        const followers = document.getElementById("productFollowers")?.textContent || "N/A";
+        const price = document.getElementById("productPrice")?.textContent || "N/A";
+        const orderId = document.getElementById("orderId")?.textContent || "N/A";
+        const phone = "+12512833165";
+
+        const message =
+`Hello BuyAHandle 👋
+
+I want to pay using PayPal.
+
+ Product: ${product}
+ Followers: ${followers}
+ Price: ${price}
+ Order ID: ${orderId}
+
+Please send me your PayPal payment details.`;
+
+        window.open(
+            `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+            "_blank"
+        );
+    });
+}
+
+/* ===============================
+   11. Plugins Initialization
+=============================== */
+if (typeof AOS !== "undefined") {
+    AOS.init({ duration: 800, once: true });
+}
+
+if (typeof particlesJS !== "undefined") {
+    particlesJS("particles-js", {
+        particles: {
+            number: { value: 60 },
+            color: { value: "#3b82f6" },
+            shape: { type: "circle" },
+            opacity: { value: 0.5 },
+            size: { value: 3 },
+            line_linked: { enable: true, distance: 150, color: "#3b82f6", opacity: 0.3, width: 1 },
+            move: { enable: true, speed: 2 }
+        },
+        interactivity: {
+            events: { onhover: { enable: true, mode: "grab" } }
+        }
+    });
+}
+
+// Counter Scroll Animation
+const counters = document.querySelectorAll(".counter");
+if (counters.length > 0) {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const counter = entry.target;
+            const target = parseInt(counter.getAttribute("data-target"));
+            const speed = 40;
+            let count = 0;
+
+            const updateCounter = () => {
+                const increment = Math.ceil(target / speed);
+                if (count < target) {
+                    count += increment;
+                    if (count > target) count = target;
+                    counter.innerText = count;
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCounter();
+            observer.unobserve(counter);
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+}
