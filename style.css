@@ -1371,397 +1371,7 @@ box-shadow:
 filter:invert(1);
 
 }
-/* ===== Crypto Payment Modal ===== */
 
-.payment-modal{
-    background:#0f172a;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.payment-modal .modal-header{
-    background:#111827;
-    border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.payment-modal .modal-title{
-    color:#f8c537;
-    font-weight:700;
-}
-
-.payment-modal .modal-body{
-    padding:30px;
-}
-.order-summary{
-
-    background:#161f33;
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:15px;
-
-    padding:20px;
-
-    margin-top:20px;
-
-}
-
-.order-summary h5{
-
-    color:#f8c537;
-
-    margin-bottom:15px;
-
-}
-
-.order-summary p{
-
-    margin-bottom:8px;
-
-}
-#walletAddress{
-
-    background:#111827;
-
-    color:#fff;
-
-    border:1px solid #f8c537;
-
-    font-weight:600;
-
-}
-/* QR Code */
-
-.payment-modal img{
-
-    background:#fff;
-
-    padding:15px;
-
-    border-radius:18px;
-
-    border:3px solid #f8c537;
-
-    box-shadow:0 0 25px rgba(248,197,55,.25);
-
-    transition:.3s;
-
-}
-
-.payment-modal img:hover{
-
-    transform:scale(1.03);
-
-}
-#copyWallet{
-
-    background:#f8c537;
-
-    color:#000;
-
-    border:none;
-
-    font-weight:700;
-
-    transition:.3s;
-
-}
-
-.payment-modal .btn-success{
-
-    border-radius:12px;
-
-    font-weight:700;
-
-    padding:12px;
-
-    margin-top:10px;
-
-}
-
-.payment-modal .btn-success:hover{
-
-    transform:translateY(-2px);
-
-}
-
-.payment-modal .payment-btn{
-
-    border-radius:12px;
-
-    font-weight:700;
-
-}
-/* Countdown Timer */
-
-#countdownTimer{
-
-    font-size:32px;
-
-    font-weight:700;
-
-    color blue;
-
-    letter-spacing:2px;
-
-}
-#copyWallet:hover{
-
-    background:#ffd95c;
-
-    transform:translateY(-2px);
-
-}
-.payment-modal .btn-success{
-
-    border-radius:12px;
-
-    font-weight:700;
-
-    padding:12px;
-
-    margin-top:10px;
-
-}
-
-.payment-modal .btn-success:hover{
-
-    transform:translateY(-2px);
-
-}
-
-.payment-modal .payment-btn{
-
-    border-radius:12px;
-
-    font-weight:700;
-
-}
-
-.payment-modal .alert-info{
-
-    background:#16213e;
-
-    color:#ffffff;
-
-    border-left:5px solid #00c2ff;
-
-    border-radius:12px;
-
-}
-.payment-modal .alert-warning{
-
-    background:#2b2110;
-
-    color:#fff3cd;
-
-    border-left:5px solid #f8c537;
-
-    border-radius:12px;
-
-}
-.payment-modal .form-control{
-
-    background:#111827;
-
-    color:#fff;
-
-    border:1px solid #2c3e50;
-
-    border-radius:12px;
-
-}
-
-.payment-modal .form-control:focus{
-
-    border-color:#f8c537;
-
-    box-shadow:0 0 12px rgba(248,197,55,.35);
-
-    background:#111827;
-
-    color:#fff;
-
-}
-.payment-modal{
-
-    box-shadow:
-    0 0 20px rgba(248,197,55,.15),
-    0 0 50px rgba(248,197,55,.08);
-
-}
-.modal.fade .modal-dialog{
-
-    transform:translateY(40px) scale(.95);
-
-    transition:all .35s ease;
-
-}
-
-.modal.show .modal-dialog{
-
-    transform:translateY(0) scale(1);
-
-}
-.payment-modal img{
-
-    background:#fff;
-
-    padding:15px;
-
-    border-radius:18px;
-
-    border:3px solid #f8c537;
-
-    box-shadow:0 15px 40px rgba(0,0,0,.35);
-
-    transition:.35s;
-
-}
-
-.payment-modal img:hover{
-
-    transform:scale(1.05) rotate(1deg);
-
-}
-.payment-modal::-webkit-scrollbar{
-
-    width:8px;
-
-}
-
-.payment-modal::-webkit-scrollbar-thumb{
-
-    background:#f8c537;
-
-    border-radius:20px;
-
-}
-.payment-popup{
-    background: rgba(15,18,35,0.95);
-    backdrop-filter: blur(18px);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:20px;
-    box-shadow:0 25px 60px rgba(0,0,0,.45);
-    animation: popupIn .35s ease;
-}
-@keyframes popupIn{
-    from{
-        opacity:0;
-        transform:translateY(25px) scale(.95);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-#paymentSentBtn{
-    background:linear-gradient(135deg,#2563eb,#3b82f6);
-    border:none;
-    border-radius:12px;
-    color:#fff;
-    font-weight:700;
-    transition:.3s;
-}
-
-#paymentSentBtn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 30px rgba(37,99,235,.45);
-}
-#paymentSuccess{
-    border-radius:16px;
-    border:1px solid rgba(34,197,94,.25);
-    animation:popupIn .4s ease;
-}
-.form-control{
-    border-radius:12px;
-    padding:14px;
-    border:1px solid #30364d;
-    transition:.3s;
-}
-
-.form-control:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 15px rgba(37,99,235,.3);
-}
-.payment-progress{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:25px 0;
-}
-
-.progress-step{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-}
-
-.step-circle{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:#2d3748;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-}
-
-.progress-step.active .step-circle{
-    background:#2563eb;
-}
-
-.progress-step span{
-    margin-top:8px;
-    color:#ccc;
-    font-size:13px;
-}
-
-.progress-line{
-    width:70px;
-    height:3px;
-    background:#2d3748;
-    margin:0 12px;
-}
-.payment-summary{
-    background:#151b2d;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:15px;
-    padding:20px;
-    margin-bottom:20px;
-}
-
-.payment-summary h4{
-    color:#fff;
-    margin-bottom:15px;
-}
-
-.summary-item{
-    display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.summary-item:last-child{
-    border-bottom:none;
-}
-
-.summary-item span{
-    color:#b8c2d1;
-}
-
-.summary-item strong{
-    color:#fff;
-}
-
-.pending-status{
-    color:#f39c12 !important;
-}
 /* ===============================
    Preview Gallery
 =============================== */
@@ -2103,3 +1713,197 @@ filter:invert(1);
     transform:translateY(-3px);
     box-shadow:0 10px 20px rgba(37,211,102,.35);
 }
+/* ==========================================
+   Crypto Payment Modal - Premium Web3 Style
+========================================== */
+
+/* Modal Container & Backdrop */
+#cryptoModal .modal-content {
+    background: #0f172a !important; /* Deep dark slate background */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 
+                0 0 30px rgba(59, 130, 246, 0.15) !important;
+    color: #f8fafc !important;
+    backdrop-filter: blur(12px);
+}
+
+/* Modal Header */
+#cryptoModal .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 1.5rem 1.5rem 1rem !important;
+}
+
+#cryptoModal .modal-title {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+}
+
+/* Order Info Card Wrapper */
+#cryptoModal .crypto-details-card {
+    background: #1e293b !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+/* 30-Minute Timer Box */
+#cryptoModal .timer-box {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    border-radius: 12px !important;
+    color: #fca5a5 !important;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#cryptoModal #countdownTimer {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    color: #ef4444 !important;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+/* Instructions Box */
+#cryptoModal .instructions-box {
+    background: rgba(59, 130, 246, 0.08) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    border-radius: 12px !important;
+    color: #93c5fd !important;
+}
+
+#cryptoModal .instructions-box h6 {
+    color: #3b82f6;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+#cryptoModal .instructions-box ul li {
+    font-size: 0.88rem;
+    margin-bottom: 6px;
+    color: #cbd5e1;
+}
+
+/* QR Code Styling */
+#cryptoModal .qr-code-img {
+    max-width: 200px;
+    border-radius: 16px;
+    padding: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Inputs & Form Controls */
+#cryptoModal label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+}
+
+#cryptoModal .form-control {
+    background: #090d16 !important;
+    border: 1px solid #334155 !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+#cryptoModal .form-control:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    outline: none;
+}
+
+#cryptoModal .form-control::placeholder {
+    color: #64748b !important;
+}
+
+/* Copy Button Input Group */
+#cryptoModal #walletAddress {
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #38bdf8 !important;
+}
+
+#cryptoModal #copyWallet {
+    background: #2563eb !important;
+    border: none !important;
+    border-radius: 0 10px 10px 0 !important;
+    font-weight: 600;
+    padding: 0 20px;
+    transition: all 0.2s ease;
+}
+
+#cryptoModal #copyWallet:hover {
+    background: #1d4ed8 !important;
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+}
+
+/* TXID Help Box */
+#cryptoModal .txid-info-box {
+    background: #1e293b !important;
+    border-left: 3px solid #3b82f6 !important;
+    border-radius: 8px;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+}
+
+#cryptoModal .txid-info-box strong {
+    color: #f8fafc;
+}
+
+/* Buttons Styling */
+#cryptoModal #paymentSentBtn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25);
+    transition: all 0.3s ease;
+}
+
+#cryptoModal #paymentSentBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+}
+
+#cryptoModal .btn-outline-success {
+    border: 1px solid #10b981 !important;
+    color: #10b981 !important;
+    border-radius: 12px !important;
+    padding: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#cryptoModal .btn-outline-success:hover {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #34d399 !important;
+}
+
+/* Custom Success & Receipt Styling */
+#cryptoModal .alert-success-custom {
+    background: rgba(16, 185, 129, 0.1) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    border-radius: 14px !important;
+    color: #6ee7b7 !important;
+}
+
+#cryptoModal #paymentReceipt {
+    background: #090d16 !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 12px !important;
+    color: #e2e8f0 !important;
+    text-align: left;
+}
+

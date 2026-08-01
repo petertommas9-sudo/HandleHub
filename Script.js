@@ -33,11 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", () => {
         if (!navbar) return;
         if (window.scrollY > 80) {
-            navbar.style.padding = "12px 0";
-            navbar.style.background = "rgba(8,12,24,.92)";
+            navbar.classList.add("navbar-scrolled");
         } else {
-            navbar.style.padding = "20px 0";
-            navbar.style.background = "rgba(8,12,24,.65)";
+            navbar.classList.remove("navbar-scrolled");
         }
     });
 
@@ -57,17 +55,22 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===============================
-   5. Crypto Payment
+   5. Crypto Payment Modal Switch
 =============================== */
 const cryptoBtn = document.querySelector(".crypto-btn");
 if (cryptoBtn) {
     cryptoBtn.addEventListener("click", function () {
         const paymentModalElement = document.getElementById("paymentModal");
-        const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
-        if (paymentModal) paymentModal.hide();
+        if (typeof bootstrap !== "undefined" && paymentModalElement) {
+            const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
+            if (paymentModal) paymentModal.hide();
 
-        const cryptoModal = new bootstrap.Modal(document.getElementById("cryptoModal"));
-        cryptoModal.show();
+            const cryptoModalElement = document.getElementById("cryptoModal");
+            if (cryptoModalElement) {
+                const cryptoModal = new bootstrap.Modal(cryptoModalElement);
+                cryptoModal.show();
+            }
+        }
     });
 }
 
@@ -305,7 +308,7 @@ const paypalBtn = document.getElementById("paypalBtn");
 if (paypalBtn) {
     paypalBtn.addEventListener("click", function () {
         const paymentModalElement = document.getElementById("paymentModal");
-        if (typeof bootstrap !== "undefined") {
+        if (typeof bootstrap !== "undefined" && paymentModalElement) {
             const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
             if (paymentModal) paymentModal.hide();
         }
