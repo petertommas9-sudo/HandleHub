@@ -141,7 +141,7 @@ if (paymentSentBtn) {
         const productNameEl = document.getElementById("productName");
 
         try {
-            const response = await fetch("http://168.231.75.44:3000/api/verify-payment", {
+            const response = await fetch("/api/verify-payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -191,7 +191,7 @@ async function loadAccountsFromBackend() {
     if (!container) return;
 
     try {
-        const response = await fetch("http://168.231.75.44:3000/api/products");
+        const response = await fetch("/api/products");
         const data = await response.json();
 
         if (data.success && data.products.length > 0) {
